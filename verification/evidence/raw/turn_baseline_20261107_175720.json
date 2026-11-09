@@ -1,0 +1,111 @@
+{
+  "captured_at": "2026-11-07T17:57:20.118012-05:00",
+  "live_valid": true,
+  "status": {
+    "simulated": false,
+    "age_s": 0.4,
+    "latest": {
+      "state": "normal",
+      "sound": false,
+      "ev": [],
+      "remaining_s": 76.0,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "hold_need_s": 15.0,
+      "ok": true,
+      "anchor": -0.7,
+      "still": 7.8689,
+      "acked": true,
+      "pitch": 3.6,
+      "pos": "left",
+      "roll": -47.5,
+      "hold_s": 10.2
+    },
+    "shift": {
+      "shift_start": "15:00",
+      "turns": 40,
+      "late_intervals": 11,
+      "partial_turns": 17,
+      "compliance_pct": 74,
+      "out_of_bed_min": 2.0
+    },
+    "events": [
+      {
+        "ts": 1794092229.481344,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794092195.709867,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092180.4729862,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794092162.1925938,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794092097.959622,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092083.2088761,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794092003.976372,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091989.126484,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794091957.885395,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091942.9429162,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794091908.7165911,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091894.627197,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794091893.577467,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794091839.708929,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794091838.809993,
+        "type": "position",
+        "detail": "supine"
+      }
+    ]
+  },
+  "test": "Turn-detection baseline; motion has not yet been independently observed."
+}

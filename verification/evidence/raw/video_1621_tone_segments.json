@@ -1,0 +1,95 @@
+{
+  "method": "20ms Hann FFT, 2.5ms hop, 1120-1280Hz band, threshold0.002",
+  "segments": [
+    {
+      "start_s": 25.8825,
+      "end_s": 26.12,
+      "duration_s": 0.2375
+    },
+    {
+      "start_s": 26.1825,
+      "end_s": 26.415,
+      "duration_s": 0.2325
+    },
+    {
+      "start_s": 26.4825,
+      "end_s": 26.665,
+      "duration_s": 0.1825
+    },
+    {
+      "start_s": 26.7325,
+      "end_s": 26.91,
+      "duration_s": 0.1775
+    },
+    {
+      "start_s": 26.9825,
+      "end_s": 27.16,
+      "duration_s": 0.1775
+    },
+    {
+      "start_s": 27.2325,
+      "end_s": 27.415,
+      "duration_s": 0.1825
+    },
+    {
+      "start_s": 27.485,
+      "end_s": 27.715,
+      "duration_s": 0.23
+    },
+    {
+      "start_s": 27.7825,
+      "end_s": 27.965,
+      "duration_s": 0.1825
+    },
+    {
+      "start_s": 28.035,
+      "end_s": 28.215,
+      "duration_s": 0.18
+    },
+    {
+      "start_s": 28.3325,
+      "end_s": 28.565,
+      "duration_s": 0.2325
+    },
+    {
+      "start_s": 30.935,
+      "end_s": 31.1175,
+      "duration_s": 0.1825
+    },
+    {
+      "start_s": 31.185,
+      "end_s": 31.4175,
+      "duration_s": 0.2325
+    },
+    {
+      "start_s": 31.485,
+      "end_s": 31.7175,
+      "duration_s": 0.2325
+    },
+    {
+      "start_s": 31.7825,
+      "end_s": 31.97,
+      "duration_s": 0.1875
+    },
+    {
+      "start_s": 32.0825,
+      "end_s": 32.315,
+      "duration_s": 0.2325
+    },
+    {
+      "start_s": 32.3825,
+      "end_s": 32.565,
+      "duration_s": 0.1825
+    },
+    {
+      "start_s": 32.6325,
+      "end_s": 32.8175,
+      "duration_s": 0.185
+    },
+    {
+      "start_s": 32.935,
+      "end_s": 33.1625,
+      "duration_s": 0.2275
+    }
+  ]
+}

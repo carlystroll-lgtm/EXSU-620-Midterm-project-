@@ -1,0 +1,103 @@
+{
+  "reference_roll_deg": 0,
+  "trial": 1,
+  "capture_role": "Missing independently repositioned zero trial collected after trials 2 and 3; chronology retained",
+  "reference_source": "Operator-stated level surface; not independently visually confirmed",
+  "calibration_changed": false,
+  "samples": [
+    {
+      "captured_at": "2026-11-08T08:20:42.544636-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 77,
+      "source_uptime_s": 80.841,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:43.555312-05:00",
+      "roll": 1.5,
+      "pitch": -0.6,
+      "source_seq": 78,
+      "source_uptime_s": 81.841,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:44.567233-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 79,
+      "source_uptime_s": 82.841,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:45.580793-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 80,
+      "source_uptime_s": 83.841,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:46.592649-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 81,
+      "source_uptime_s": 84.841,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:47.603854-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 82,
+      "source_uptime_s": 85.842,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:48.618603-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 83,
+      "source_uptime_s": 86.891,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:49.633167-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 84,
+      "source_uptime_s": 87.892,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:50.649690-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 85,
+      "source_uptime_s": 88.941,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:20:51.657720-05:00",
+      "roll": 1.5,
+      "pitch": -0.5,
+      "source_seq": 86,
+      "source_uptime_s": 89.943,
+      "scale": 1.0
+    }
+  ],
+  "summary": {
+    "roll": {
+      "mean_deg": 1.5,
+      "min_deg": 1.5,
+      "max_deg": 1.5
+    },
+    "pitch": {
+      "mean_deg": -0.51,
+      "min_deg": -0.6,
+      "max_deg": -0.5
+    }
+  },
+  "mean_roll_error_deg": 1.5,
+  "all_samples_within_5_deg_of_stated_reference": true
+}

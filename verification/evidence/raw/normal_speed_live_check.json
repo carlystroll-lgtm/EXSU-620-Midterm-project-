@@ -1,0 +1,122 @@
+{
+  "checked_at": "2026-11-07T22:46:49.351356-05:00",
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794109608.839023,
+      "stored_ts": 1794109608.839023,
+      "last_source_seq": 2,
+      "source_sequence_gaps": 0,
+      "source_restarts": 1,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.01860189437866211,
+      "queued_records": 0
+    },
+    "age_s": 0.5,
+    "latest": {
+      "source_uptime_s": 545.451,
+      "source_seq": 2,
+      "acked": false,
+      "roll": 0.6,
+      "anchor": 0.6,
+      "hold_s": 0.0,
+      "state": "normal",
+      "pos": "supine",
+      "hold_need_s": 900.0,
+      "remaining_s": 7198.0,
+      "interval_s": 7200.0,
+      "scale": 1.0,
+      "pitch": -0.3,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": null
+    },
+    "shift": {
+      "shift_start": "15:00",
+      "turns": 69,
+      "late_intervals": 25,
+      "partial_turns": 29,
+      "compliance_pct": 66,
+      "out_of_bed_min": 8.7
+    },
+    "events": [
+      {
+        "ts": 1794109601.0465019,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794109496.094932,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794109489.7317061,
+        "type": "critical_clear",
+        "detail": ""
+      },
+      {
+        "ts": 1794109489.7317061,
+        "type": "turn",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794109474.779016,
+        "type": "position",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794109463.12924,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794109454.5807328,
+        "type": "critical",
+        "detail": ""
+      },
+      {
+        "ts": 1794109439.574246,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794109334.613114,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794109321.6629288,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794109313.163711,
+        "type": "critical_clear",
+        "detail": ""
+      },
+      {
+        "ts": 1794109313.163711,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794109298.1131089,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794109292.164649,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794107325.726188,
+        "type": "position",
+        "detail": "supine"
+      }
+    ]
+  }
+}

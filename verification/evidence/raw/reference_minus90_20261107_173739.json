@@ -1,0 +1,70 @@
+{
+  "reference_roll_deg": -90,
+  "reference_source": "Operator-stated reference; not independently visually confirmed",
+  "samples": [
+    {
+      "captured_at": "2026-11-07T17:37:30.536324-05:00",
+      "roll": -84.4,
+      "pitch": 4.7
+    },
+    {
+      "captured_at": "2026-11-07T17:37:31.550871-05:00",
+      "roll": -84.8,
+      "pitch": 4.9
+    },
+    {
+      "captured_at": "2026-11-07T17:37:32.575379-05:00",
+      "roll": -84.5,
+      "pitch": 4.8
+    },
+    {
+      "captured_at": "2026-11-07T17:37:33.599426-05:00",
+      "roll": -84.0,
+      "pitch": 4.9
+    },
+    {
+      "captured_at": "2026-11-07T17:37:34.616975-05:00",
+      "roll": -84.1,
+      "pitch": 4.7
+    },
+    {
+      "captured_at": "2026-11-07T17:37:35.629869-05:00",
+      "roll": -84.0,
+      "pitch": 4.7
+    },
+    {
+      "captured_at": "2026-11-07T17:37:36.647875-05:00",
+      "roll": -83.8,
+      "pitch": 4.8
+    },
+    {
+      "captured_at": "2026-11-07T17:37:37.658787-05:00",
+      "roll": -83.6,
+      "pitch": 4.9
+    },
+    {
+      "captured_at": "2026-11-07T17:37:38.675851-05:00",
+      "roll": -84.1,
+      "pitch": 4.7
+    },
+    {
+      "captured_at": "2026-11-07T17:37:39.691711-05:00",
+      "roll": -84.1,
+      "pitch": 4.8
+    }
+  ],
+  "summary": {
+    "roll": {
+      "mean_deg": -84.14,
+      "min_deg": -84.8,
+      "max_deg": -83.6
+    },
+    "pitch": {
+      "mean_deg": 4.79,
+      "min_deg": 4.7,
+      "max_deg": 4.9
+    }
+  },
+  "mean_roll_error_deg": 5.86,
+  "all_samples_within_5_deg_of_stated_reference": false
+}

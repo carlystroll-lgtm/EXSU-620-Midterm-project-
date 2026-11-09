@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-11-08T16:52:02.112333-05:00",
+  "operator_report": "Separate testing confirmed sound output, all three alarm patterns and silencing when the button was pressed. Second press in IMG_1621 was firm.",
+  "video_1621_result": "Second press acknowledged and silenced critical sequence; remaining pulses suppressed.",
+  "numerical_silence_latency_s": null,
+  "latency_status": "Not independently resolved; final full tone ends just before acknowledgement flash.",
+  "source": "Operator report plus local video/acoustic/log review"
+}

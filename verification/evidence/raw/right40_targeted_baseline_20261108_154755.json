@@ -1,0 +1,127 @@
+{
+  "test": "Targeted fixed-reference 40-degree right turn",
+  "armed_at": "2026-11-08T15:47:55.331813-05:00",
+  "start_db_seq": 21477,
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794170874.740447,
+      "stored_ts": 1794170874.740447,
+      "last_source_seq": 3146,
+      "source_sequence_gaps": 0,
+      "source_restarts": 1,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.029993057250976562,
+      "queued_records": 0
+    },
+    "age_s": 0.6,
+    "latest": {
+      "source_uptime_s": 3787.808,
+      "source_seq": 3146,
+      "acked": false,
+      "roll": -0.1,
+      "anchor": 3.3,
+      "hold_s": 0.0,
+      "state": "critical",
+      "pos": "supine",
+      "hold_need_s": 15.0,
+      "remaining_s": -455.9,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "pitch": -2.0,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": 0.0102
+    },
+    "shift": {
+      "shift_start": "15:00",
+      "turns": 20,
+      "late_intervals": 2,
+      "partial_turns": 14,
+      "compliance_pct": 90,
+      "out_of_bed_min": 3.6
+    },
+    "events": [
+      {
+        "ts": 1794170418.844797,
+        "type": "critical",
+        "detail": ""
+      },
+      {
+        "ts": 1794170403.854578,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794170300.739348,
+        "type": "press",
+        "detail": "normal"
+      },
+      {
+        "ts": 1794170300.739348,
+        "type": "critical_clear",
+        "detail": ""
+      },
+      {
+        "ts": 1794170300.739348,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794170298.8865201,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794170297.238422,
+        "type": "turn",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794170282.246537,
+        "type": "position",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794170148.785717,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794170133.456834,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794170117.554168,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794170103.054643,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794170094.407731,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794170094.357562,
+        "type": "partial",
+        "detail": "6 s"
+      },
+      {
+        "ts": 1794170089.1553001,
+        "type": "position",
+        "detail": "left"
+      }
+    ]
+  },
+  "reference": "Operator preparing independently secured 40-degree reference; actual angle and timing to be checked on video",
+  "target_hold_s": 20,
+  "run_status": "Armed; movement not yet confirmed"
+}

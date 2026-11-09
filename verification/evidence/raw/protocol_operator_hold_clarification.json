@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-11-08T16:12:23.669074-05:00",
+  "source": "Operator statement in chat after review",
+  "operator_statement": "hold was interupted",
+  "scope": "Steps 3 and 11: interrupted right-turn holds. Steps 4 and 12: dependent return steps after qualifying lateral turns not established.",
+  "classification": "Invalid test executions based on operator report; not independently confirmed cause from video",
+  "excluded_steps": [
+    3,
+    4,
+    11,
+    12
+  ],
+  "unchanged_observation": "No turn events in those four planned windows; raw data and original comparison retained.",
+  "interpretation": "Exclusion is not a pass or a successful repeat. Remaining schedule coverage is 16/16; formal sensitivity and specificity remain unissued."
+}

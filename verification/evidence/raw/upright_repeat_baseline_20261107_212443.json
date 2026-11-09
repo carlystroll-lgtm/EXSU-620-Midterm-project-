@@ -1,0 +1,124 @@
+{
+  "test": "Repeat upright-duration verification after logging fix",
+  "phase": "flat baseline",
+  "captured_at": "2026-11-07T21:24:43.405975-05:00",
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794104683.162221,
+      "stored_ts": 1794104683.162221,
+      "last_source_seq": 209,
+      "source_sequence_gaps": 0,
+      "source_restarts": 0,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.011883974075317383,
+      "queued_records": 0
+    },
+    "age_s": 0.2,
+    "latest": {
+      "source_uptime_s": 311.917,
+      "source_seq": 209,
+      "acked": false,
+      "roll": 2.1,
+      "anchor": 1.0,
+      "hold_s": 0.0,
+      "state": "critical",
+      "pos": "supine",
+      "hold_need_s": 15.0,
+      "remaining_s": -91.0,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "pitch": -0.5,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": 0.0115
+    },
+    "shift": {
+      "shift_start": "15:00",
+      "turns": 60,
+      "late_intervals": 20,
+      "partial_turns": 27,
+      "compliance_pct": 69,
+      "out_of_bed_min": 5.2
+    },
+    "events": [
+      {
+        "ts": 1794104592.212207,
+        "type": "critical",
+        "detail": ""
+      },
+      {
+        "ts": 1794104577.211596,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794104340.582837,
+        "type": "critical",
+        "detail": ""
+      },
+      {
+        "ts": 1794104239.760532,
+        "type": "critical_clear",
+        "detail": ""
+      },
+      {
+        "ts": 1794104239.760532,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794104220.6178,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794104205.719053,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794104201.415906,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794104186.535668,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794104181.686686,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794104147.5843132,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794104145.585553,
+        "type": "position",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794103976.510925,
+        "type": "turn",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794103961.512152,
+        "type": "position",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794103950.4125319,
+        "type": "position",
+        "detail": "right"
+      }
+    ]
+  }
+}

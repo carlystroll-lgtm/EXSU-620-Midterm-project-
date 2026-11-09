@@ -1,0 +1,17 @@
+{
+  "clip": "IMG_1623.mov",
+  "visible_final_button_depression_approx_s": [
+    29.8,
+    29.9
+  ],
+  "first_white_ack_frame_s": 29.8983333333,
+  "last_tone_window_end_by_threshold_s": {
+    "0.001": 30.035,
+    "0.002": 29.945,
+    "0.004": 29.915
+  },
+  "conservative_observed_response_bound_s": 0.3,
+  "criterion_s": 0.5,
+  "result": "Single filmed trial supports criterion; approximate frame-based estimate, not calibrated electrical latency",
+  "limits": "About 33 ms video quantization; exact electrical closure unobserved; no repeatability claim"
+}

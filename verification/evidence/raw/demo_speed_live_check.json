@@ -1,0 +1,122 @@
+{
+  "checked_at": "2026-11-08T08:26:10.504123-05:00",
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794144369.78932,
+      "stored_ts": 1794144369.78932,
+      "last_source_seq": 11,
+      "source_sequence_gaps": 0,
+      "source_restarts": 1,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.02550983428955078,
+      "queued_records": 0
+    },
+    "age_s": 0.7,
+    "latest": {
+      "source_uptime_s": 408.1,
+      "source_seq": 11,
+      "acked": false,
+      "roll": 1.3,
+      "anchor": 1.3,
+      "hold_s": 0.0,
+      "state": "normal",
+      "pos": "supine",
+      "hold_need_s": 15.0,
+      "remaining_s": 108.7,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "pitch": -0.6,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": null
+    },
+    "shift": {
+      "shift_start": "07:00",
+      "turns": 0,
+      "late_intervals": 0,
+      "partial_turns": 3,
+      "compliance_pct": null,
+      "out_of_bed_min": 0.0
+    },
+    "events": [
+      {
+        "ts": 1794144270.8294048,
+        "type": "partial",
+        "detail": "86 s"
+      },
+      {
+        "ts": 1794144270.8294048,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794144184.179369,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794144183.429593,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794144183.380364,
+        "type": "partial",
+        "detail": "81 s"
+      },
+      {
+        "ts": 1794144102.378679,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794144101.4300401,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794144101.330436,
+        "type": "partial",
+        "detail": "1 s"
+      },
+      {
+        "ts": 1794144100.180605,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794116924.062481,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794116806.88534,
+        "type": "critical",
+        "detail": ""
+      },
+      {
+        "ts": 1794115906.859216,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794109601.0465019,
+        "type": "advisory",
+        "detail": ""
+      },
+      {
+        "ts": 1794109496.094932,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794109489.7317061,
+        "type": "critical_clear",
+        "detail": ""
+      }
+    ]
+  }
+}

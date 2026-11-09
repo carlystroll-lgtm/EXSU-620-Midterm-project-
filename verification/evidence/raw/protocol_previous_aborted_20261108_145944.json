@@ -1,0 +1,126 @@
+{
+  "armed_at": "2026-11-08T14:55:43.292767-05:00",
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794167743.224236,
+      "stored_ts": 1794167743.224236,
+      "last_source_seq": 19,
+      "source_sequence_gaps": 0,
+      "source_restarts": 1,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.02398371696472168,
+      "queued_records": 0
+    },
+    "age_s": 0.1,
+    "latest": {
+      "source_uptime_s": 656.291,
+      "source_seq": 19,
+      "acked": false,
+      "roll": 1.0,
+      "anchor": 1.0,
+      "hold_s": 0.0,
+      "state": "normal",
+      "pos": "supine",
+      "hold_need_s": 15.0,
+      "remaining_s": 100.7,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "pitch": -1.1,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": null
+    },
+    "shift": {
+      "shift_start": "07:00",
+      "turns": 0,
+      "late_intervals": 1,
+      "partial_turns": 6,
+      "compliance_pct": 0,
+      "out_of_bed_min": 0.1
+    },
+    "events": [
+      {
+        "ts": 1794167642.048349,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794167421.091166,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167420.790689,
+        "type": "partial",
+        "detail": "4 s"
+      },
+      {
+        "ts": 1794167415.541048,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794167403.887538,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167403.7376719,
+        "type": "partial",
+        "detail": "15 s"
+      },
+      {
+        "ts": 1794167388.433165,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794167376.836145,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167376.784229,
+        "type": "partial",
+        "detail": "2 s"
+      },
+      {
+        "ts": 1794167374.584525,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794167372.985276,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167368.08198,
+        "type": "position",
+        "detail": "upright"
+      },
+      {
+        "ts": 1794167366.98255,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794167364.584813,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167363.234716,
+        "type": "position",
+        "detail": "upright"
+      }
+    ]
+  },
+  "instruction": "First subsequent physical button press on video is sync marker; actual movements must be scored from video.",
+  "start_db_seq": 18350,
+  "run_status": "Aborted by operator; suspected wrong movement direction",
+  "closed_at": "2026-11-08T14:59:44.954410-05:00"
+}

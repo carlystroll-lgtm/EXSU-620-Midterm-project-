@@ -1,0 +1,6 @@
+{
+  "changed_at": "2026-11-08T16:28:21.080639-05:00",
+  "audible_alerts": true,
+  "backup": "/Users/kyri/.codex/.chatgpt-projects/g-p-6ac65657ce0081919e358a4d9aae3218/verification/before_audio_enable_20261108_162820",
+  "verification": "Saved configuration checked; acoustic output and silence latency require physical observation."
+}

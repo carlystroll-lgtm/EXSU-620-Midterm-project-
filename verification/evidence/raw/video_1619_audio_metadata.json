@@ -1,0 +1,8 @@
+{
+  "reader_status" : 2,
+  "first_pts_s" : 0,
+  "sample_rate" : 48000,
+  "last_buffer_pts_s" : 64.682666666666663,
+  "sample_count" : 3106863,
+  "duration_s" : 64.726312500000006
+}

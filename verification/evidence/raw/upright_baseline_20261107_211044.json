@@ -1,0 +1,54 @@
+{
+  "test": "Upright position and duration",
+  "phase": "baseline",
+  "captured_at": "2026-11-07T21:10:44.364381-05:00",
+  "last_seq": 6223,
+  "sample_ts": 1794103840.4024909,
+  "age_s": 3.96,
+  "sample": {
+    "state": "advisory",
+    "sound": false,
+    "ev": [
+      [
+        "advisory",
+        ""
+      ]
+    ],
+    "remaining_s": 15.0,
+    "interval_s": 120.0,
+    "scale": 60.0,
+    "hold_need_s": 15.0,
+    "ok": true,
+    "anchor": -0.4,
+    "still": 0.0535,
+    "acked": true,
+    "pitch": 1.8,
+    "pos": "supine",
+    "roll": -0.4,
+    "hold_s": 0.0
+  },
+  "reference_note": "Physical posture and duration need independently timed video; server telemetry is the device result.",
+  "confirmation": {
+    "checked_at": "2026-11-07T21:10:58.533344-05:00",
+    "seq": 6234,
+    "sample_ts": 1794103858.485374,
+    "age_s": 0.05,
+    "sample": {
+      "state": "critical",
+      "sound": false,
+      "ev": [],
+      "remaining_s": -3.1,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "hold_need_s": 15.0,
+      "ok": true,
+      "anchor": -0.4,
+      "still": 10.0287,
+      "acked": false,
+      "pitch": 86.5,
+      "pos": "upright",
+      "roll": 9.1,
+      "hold_s": 0.0
+    }
+  }
+}

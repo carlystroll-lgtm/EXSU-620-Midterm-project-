@@ -1,0 +1,111 @@
+{
+  "captured_at": "2026-11-07T17:58:04.119763-05:00",
+  "live_valid": true,
+  "status": {
+    "simulated": false,
+    "age_s": 0.3,
+    "latest": {
+      "state": "normal",
+      "sound": false,
+      "ev": [],
+      "remaining_s": 100.8,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "hold_need_s": 15.0,
+      "ok": true,
+      "anchor": -0.9,
+      "still": 0.218,
+      "acked": true,
+      "pitch": 0.8,
+      "pos": "supine",
+      "roll": -0.9,
+      "hold_s": 0.0
+    },
+    "shift": {
+      "shift_start": "15:00",
+      "turns": 42,
+      "late_intervals": 11,
+      "partial_turns": 17,
+      "compliance_pct": 75,
+      "out_of_bed_min": 2.0
+    },
+    "events": [
+      {
+        "ts": 1794092264.6087391,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092249.475368,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794092244.534637,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092229.481344,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794092195.709867,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092180.4729862,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794092162.1925938,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794092097.959622,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794092083.2088761,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794092003.976372,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091989.126484,
+        "type": "position",
+        "detail": "left"
+      },
+      {
+        "ts": 1794091957.885395,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091942.9429162,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794091908.7165911,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794091894.627197,
+        "type": "position",
+        "detail": "left"
+      }
+    ]
+  },
+  "test": "Turn-detection baseline; operator reports flat and ready."
+}

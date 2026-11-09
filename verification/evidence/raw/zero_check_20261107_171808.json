@@ -1,0 +1,109 @@
+{
+  "reference": "User holding still; level surface and mounting orientation not independently confirmed. No correction applied.",
+  "samples": [
+    {
+      "captured_at": "2026-11-07T17:17:53.530099-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:17:54.544442-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:17:55.557774-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:17:56.573521-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -4.0
+    },
+    {
+      "captured_at": "2026-11-07T17:17:57.589546-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:17:58.605401-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:17:59.617544-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:00.636787-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:01.648348-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:02.667928-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:03.687195-05:00",
+      "age_s": 1.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:04.703591-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -4.0
+    },
+    {
+      "captured_at": "2026-11-07T17:18:05.713194-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    },
+    {
+      "captured_at": "2026-11-07T17:18:06.729206-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -4.0
+    },
+    {
+      "captured_at": "2026-11-07T17:18:07.744814-05:00",
+      "age_s": 0.0,
+      "roll": -2.6,
+      "pitch": -3.9
+    }
+  ],
+  "summary": {
+    "roll": {
+      "mean_deg": -2.6,
+      "min_deg": -2.6,
+      "max_deg": -2.6,
+      "sd_deg": 0.0
+    },
+    "pitch": {
+      "mean_deg": -3.92,
+      "min_deg": -4.0,
+      "max_deg": -3.9,
+      "sd_deg": 0.041
+    }
+  }
+}

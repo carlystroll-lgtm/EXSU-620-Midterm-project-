@@ -1,0 +1,16 @@
+{
+  "roll_zero_deg": -2.6,
+  "pitch_zero_deg": -3.92,
+  "reference": "Operator confirmed level surface in intended mounting orientation",
+  "backup": "/Users/kyri/.codex/.chatgpt-projects/g-p-6ac65657ce0081919e358a4d9aae3218/verification/before_zero_20261107_171851",
+  "files": [
+    {
+      "path": "/Volumes/CIRCUITPY/code.py",
+      "sha256": "1694434b42ab79d4a5e26115145fcdd66d63d7a50a86adb640e8cc30d02fe7c9"
+    },
+    {
+      "path": "/Users/kyri/Desktop/Project08_Code/code.py",
+      "sha256": "aefe8cfc37c371c859fce33ce5d36a3cbe8093693c099f93e5c9267e998c2ecf"
+    }
+  ]
+}

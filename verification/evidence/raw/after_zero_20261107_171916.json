@@ -1,0 +1,86 @@
+{
+  "samples": [
+    {
+      "captured_at": "2026-11-07T17:19:06.609770-05:00",
+      "roll": 0.1,
+      "pitch": 0.0,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:07.625914-05:00",
+      "roll": 0.2,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:08.639402-05:00",
+      "roll": 0.1,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:09.656627-05:00",
+      "roll": 0.1,
+      "pitch": 0.2,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:10.672618-05:00",
+      "roll": 0.0,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:11.690276-05:00",
+      "roll": -0.0,
+      "pitch": 0.0,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:12.702176-05:00",
+      "roll": 0.0,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:13.716718-05:00",
+      "roll": -0.0,
+      "pitch": 0.0,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:14.728963-05:00",
+      "roll": 0.1,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    },
+    {
+      "captured_at": "2026-11-07T17:19:15.742021-05:00",
+      "roll": 0.1,
+      "pitch": 0.1,
+      "sound": false,
+      "scale": 60.0
+    }
+  ],
+  "summary": {
+    "roll": {
+      "mean_deg": 0.07,
+      "min_deg": 0.0,
+      "max_deg": 0.2
+    },
+    "pitch": {
+      "mean_deg": 0.08,
+      "min_deg": 0.0,
+      "max_deg": 0.2
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "armed_at": "2026-11-08T14:59:44.958265-05:00",
+  "run_label": "New run after direction check",
+  "status": {
+    "simulated": false,
+    "ingestion": {
+      "received_ts": 1794167983.984457,
+      "stored_ts": 1794167983.984457,
+      "last_source_seq": 263,
+      "source_sequence_gaps": 0,
+      "source_restarts": 1,
+      "malformed_records": 0,
+      "storage_errors": 0,
+      "max_store_delay_s": 0.02398371696472168,
+      "queued_records": 0
+    },
+    "age_s": 1.0,
+    "latest": {
+      "source_uptime_s": 897.051,
+      "source_seq": 263,
+      "acked": true,
+      "roll": 1.1,
+      "anchor": 1.1,
+      "hold_s": 0.0,
+      "state": "normal",
+      "pos": "supine",
+      "hold_need_s": 15.0,
+      "remaining_s": 111.5,
+      "interval_s": 120.0,
+      "scale": 60.0,
+      "pitch": -1.2,
+      "sound": false,
+      "ok": true,
+      "ev": [],
+      "still": 8.9019
+    },
+    "shift": {
+      "shift_start": "07:00",
+      "turns": 2,
+      "late_intervals": 2,
+      "partial_turns": 9,
+      "compliance_pct": 33,
+      "out_of_bed_min": 0.1
+    },
+    "events": [
+      {
+        "ts": 1794167979.9371488,
+        "type": "press",
+        "detail": "normal"
+      },
+      {
+        "ts": 1794167979.9371488,
+        "type": "critical_clear",
+        "detail": ""
+      },
+      {
+        "ts": 1794167979.9371488,
+        "type": "ack",
+        "detail": ""
+      },
+      {
+        "ts": 1794167975.584811,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794167960.684326,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167942.334537,
+        "type": "turn",
+        "detail": "lateral"
+      },
+      {
+        "ts": 1794167927.386917,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794167925.533875,
+        "type": "partial",
+        "detail": "2 s"
+      },
+      {
+        "ts": 1794167925.533875,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167923.584117,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794167923.034233,
+        "type": "partial",
+        "detail": "0 s"
+      },
+      {
+        "ts": 1794167862.285136,
+        "type": "position",
+        "detail": "supine"
+      },
+      {
+        "ts": 1794167858.584665,
+        "type": "partial",
+        "detail": "3 s"
+      },
+      {
+        "ts": 1794167855.584495,
+        "type": "position",
+        "detail": "right"
+      },
+      {
+        "ts": 1794167843.934464,
+        "type": "critical",
+        "detail": ""
+      }
+    ]
+  },
+  "start_db_seq": 18594,
+  "instruction": "First subsequent physical button press on video is sync marker. Right was checked as positive roll; score actual movements from video.",
+  "run_status": "Aborted by operator; video not recorded",
+  "closed_at": "2026-11-08T15:09:58.872828-05:00",
+  "end_db_seq": 19214
+}

@@ -1,0 +1,103 @@
+{
+  "reference_roll_deg": -60,
+  "trial": 1,
+  "attempt": "Later repeat to investigate prior out-of-tolerance reading; original retained",
+  "reference_source": "Operator-stated protractor reference; not independently visually confirmed",
+  "calibration_changed": false,
+  "samples": [
+    {
+      "captured_at": "2026-11-08T08:22:26.671676-05:00",
+      "roll": -58.4,
+      "pitch": 2.4,
+      "source_seq": 181,
+      "source_uptime_s": 184.291,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:27.685325-05:00",
+      "roll": -58.4,
+      "pitch": 2.4,
+      "source_seq": 182,
+      "source_uptime_s": 185.292,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:28.700157-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 183,
+      "source_uptime_s": 186.342,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:29.717170-05:00",
+      "roll": -58.5,
+      "pitch": 2.4,
+      "source_seq": 184,
+      "source_uptime_s": 187.342,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:30.730465-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 185,
+      "source_uptime_s": 188.342,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:31.743417-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 186,
+      "source_uptime_s": 189.391,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:32.756511-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 187,
+      "source_uptime_s": 190.392,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:33.774001-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 188,
+      "source_uptime_s": 191.392,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:34.790300-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 189,
+      "source_uptime_s": 192.441,
+      "scale": 1.0
+    },
+    {
+      "captured_at": "2026-11-08T08:22:35.807219-05:00",
+      "roll": -58.3,
+      "pitch": 2.4,
+      "source_seq": 190,
+      "source_uptime_s": 193.441,
+      "scale": 1.0
+    }
+  ],
+  "summary": {
+    "roll": {
+      "mean_deg": -58.34,
+      "min_deg": -58.5,
+      "max_deg": -58.3
+    },
+    "pitch": {
+      "mean_deg": 2.4,
+      "min_deg": 2.4,
+      "max_deg": 2.4
+    }
+  },
+  "mean_roll_error_deg": 1.66,
+  "all_samples_within_5_deg_of_stated_reference": true
+}
