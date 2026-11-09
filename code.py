@@ -35,10 +35,17 @@ from adafruit_lsm6ds.lsm6ds3trc import LSM6DS3TRC
 from turnlogic import Config, Monitor, Stillness, angles
 
 cfg = Config()
-cfg.TIME_SCALE = 1.0        # set to 60.0 for a demo: 2 hours pass in 2 minutes
+cfg.TIME_SCALE = 60.0        # Demo: two-minute interval, fifteen-second turn hold
+cfg.STILL_RANGE = 0.00       # Stillness detection disabled, as in the Nov 7-8 tested configuration
+
+# Zero reference: level surface in intended mounting orientation, confirmed by operator.
+# Means of 15 live samples on 2026-11-07; raw evidence saved in verification.
+ROLL_ZERO_DEG = -2.60
+PITCH_ZERO_DEG = -3.92
 
 SAMPLE_HZ = 20
 ALPHA = 0.15                # low-pass filter weight for each new sample
+AUDIBLE_ALERTS = True      # Audible alarm patterns enabled; button acknowledges/silences.
 VOLUME = 6000               # PWM duty, 0 to 65535 (about 9%). Also use the trim pot on the amp
 N_PIX = 16
 BRIGHTNESS = 0.15
@@ -116,7 +123,7 @@ class Beeper:
         freq, on_s, off_s = self.steps[self.i]
         if not self.sounding:
             speaker.frequency = freq
-            speaker.duty_cycle = VOLUME
+            speaker.duty_cycle = VOLUME if AUDIBLE_ALERTS else 0
             self.sounding = True
             self.t_next = now + on_s
         else:
@@ -167,6 +174,7 @@ fx = fy = fz = None
 sum_x = sum_y = sum_z = 0.0
 n_sum = 0
 events_out = []
+source_seq = 0
 last_state = None
 last_button = False
 last_press_t = -10.0
@@ -207,6 +215,8 @@ while True:
         fy += ALPHA * (ay - fy)
         fz += ALPHA * (az - fz)
         roll, pitch = angles(fx, fy, fz, cfg.ROLL_SIGN)
+        roll = (roll - ROLL_ZERO_DEG + 180.0) % 360.0 - 180.0
+        pitch = pitch - PITCH_ZERO_DEG
         sum_x += ax
         sum_y += ay
         sum_z += az
@@ -252,7 +262,8 @@ while True:
         if state != "normal":
             silenced = state
 
-    quiet = state == "normal" or silenced == state or (state == "critical" and monitor.acked)
+    quiet = (not AUDIBLE_ALERTS or state == "normal" or silenced == state
+             or (state == "critical" and monitor.acked))
     beeper.set(None if quiet else state, now)
     beeper.tick(now)
 
@@ -263,7 +274,10 @@ while True:
     if send_now or now - t_report >= 1.0:
         t_report = now
         send_now = False
+        source_seq += 1
         print(json.dumps({
+            "source_seq": source_seq,
+            "source_uptime_s": round(now, 3),
             "roll": round(roll, 1),
             "pitch": round(pitch, 1),
             "pos": monitor.pos,
