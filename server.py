@@ -19,13 +19,17 @@ The recipient installs the ntfy app and subscribes to that topic. No patient inf
 or sent: the database holds angles, states and events only.
 """
 import argparse
+import getpass
 import json
 import os
+import queue
+from contextlib import contextmanager
 import sqlite3
 import threading
 import time
 import urllib.request
 from datetime import datetime, timedelta
+from check_telegram import api as telegram_api, TelegramError
 
 import uvicorn
 from fastapi import FastAPI
@@ -33,6 +37,7 @@ from fastapi.responses import FileResponse, PlainTextResponse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(HERE, "patch.db")
+TELEGRAM_BOT_TOKEN = None  # Fresh token entered privately at startup; never persisted.
 SHIFT_STARTS = [7, 15, 23]                  # hours of the day when a shift begins
 
 app = FastAPI(title="Repositioning patch")
@@ -41,10 +46,15 @@ sim = {"on": False, "ack": False, "turn": False}   # the simulator has no bedsid
 
 
 # ------------------------------------------------------------------ database
+@contextmanager
 def db():
     con = sqlite3.connect(DB_PATH, timeout=5)
     con.row_factory = sqlite3.Row
-    return con
+    try:
+        with con:
+            yield con
+    finally:
+        con.close()
 
 
 def init_db():
@@ -64,12 +74,68 @@ def init_db():
         # each phone alert sent, for the notification latency check
         con.execute("CREATE TABLE IF NOT EXISTS notifications(ts REAL, recipient_id INTEGER, type TEXT, ok INTEGER, sent_ts REAL)")
 
+        con.execute("""CREATE TABLE IF NOT EXISTS telegram_recipients(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT, chat_id TEXT UNIQUE,
+            consented_at TEXT, active INTEGER DEFAULT 1)""")
+        con.execute("""CREATE TABLE IF NOT EXISTS telegram_notifications(
+            ts REAL, recipient_id INTEGER, type TEXT, ok INTEGER, sent_ts REAL)""")
 
-def store(msg):
+
+def telegram_send(chat_id, text):
+    if not TELEGRAM_BOT_TOKEN:
+        print("Telegram disabled: restart with --telegram-token-prompt", flush=True)
+        return 0
+    try:
+        telegram_api(TELEGRAM_BOT_TOKEN, "sendMessage", chat_id=str(chat_id), text=text)
+        return 1
+    except TelegramError as error:
+        print("Telegram failed:", error, flush=True)
+        return 0
+
+
+def setup_telegram():
+    """Register only the private chat that sends a new one-time setup code."""
+    import secrets
+    identity = telegram_api(TELEGRAM_BOT_TOKEN, "getMe")
+    print("Authenticated bot: @" + identity.get("username", "unknown"), flush=True)
+    webhook = telegram_api(TELEGRAM_BOT_TOKEN, "getWebhookInfo")
+    if webhook.get("url"):
+        raise TelegramError("Webhook active. Use check_telegram.py --remove-webhook only if you intend to disable that integration, then rerun setup.")
+    code = "setup_" + secrets.token_hex(4)
+    print("Open this bot in Telegram, tap Start, and send this exact message:", code, flush=True)
+    input("After sending it, press Enter here: ")
+    updates = telegram_api(TELEGRAM_BOT_TOKEN, "getUpdates", timeout=0,
+                           allowed_updates=json.dumps(["message"]))
+    chats = {str(m["chat"]["id"]) for u in updates
+             if (m := u.get("message", {})).get("chat", {}).get("type") == "private"
+             and m.get("text", "").strip() == code}
+    if len(chats) != 1:
+        raise TelegramError("No unique matching private chat found. Stop other getUpdates pollers, then rerun setup and send the new code.")
+    chat_id = chats.pop()
+    print("Matched your private chat:", chat_id)
+    if input("Register your phone for course alerts and send one test? Type yes: ").strip().lower() != "yes":
+        print("Registration cancelled.")
+        return
+    with db() as con:
+        con.execute("""INSERT INTO telegram_recipients(label,chat_id,consented_at,active)
+            VALUES(?,?,?,1) ON CONFLICT(chat_id) DO UPDATE SET
+            label=excluded.label, consented_at=excluded.consented_at, active=1""",
+            ("Course participant", chat_id, datetime.now().astimezone().isoformat(timespec="seconds")))
+    ok = telegram_send(chat_id, "EXSU 620: Telegram notification test.")
+    with db() as con:
+        now = time.time()
+        rid = con.execute("SELECT id FROM telegram_recipients WHERE chat_id=?", (chat_id,)).fetchone()[0]
+        con.execute("INSERT INTO telegram_notifications VALUES(?,?,?,?,?)", (now,rid,"test",ok,time.time()))
+    if not ok:
+        raise TelegramError("Phone registered, but the test failed. Fix the error above and rerun setup.")
+    print("Telegram accepted the test. Confirm it arrived on your phone.")
+    print("Start your normal server with --telegram-token-prompt added to its usual arguments.")
+
+
+def store(msg, received_ts=None):
     """Save one message from the patch."""
-    now = time.time()
-    latest["t"] = now
-    latest["data"] = msg
+    now = time.time() if received_ts is None else received_ts
+    pending_alerts = []
     with db() as con:
         con.execute("INSERT INTO messages(ts, raw) VALUES(?,?)", (now, json.dumps(msg)))
         con.execute("INSERT INTO samples VALUES(?,?,?,?,?,?,?)",
@@ -78,15 +144,24 @@ def store(msg):
         for name, detail in msg.get("ev", []):
             con.execute("INSERT INTO events VALUES(?,?,?)", (now, name, detail))
             if name in ("advisory", "critical", "technical"):
-                push(name, now)
+                pending_alerts.append(name)
+    latest["t"] = now
+    latest["data"] = msg
+    # Dispatch only after the event transaction has committed.
+    for name in pending_alerts:
+        try:
+            push(name, now)
+        except Exception:
+            # Event is committed already; do not duplicate it by retrying storage.
+            print("Alert dispatch failed; event remains saved.", flush=True)
 
 
 def push(name, event_ts):
     """Send an alert to every opted-in recipient. The text carries no patient information."""
     with db() as con:
         rows = con.execute("SELECT id, topic FROM recipients WHERE active=1 AND consented_at IS NOT NULL").fetchall()
-    if not rows:
-        return
+    with db() as con:
+        telegram_rows = con.execute("SELECT id, chat_id FROM telegram_recipients WHERE active=1 AND consented_at IS NOT NULL").fetchall()
     text = {"advisory": "Bed patch: turn due in 15 minutes",
             "critical": "Bed patch: turn overdue, no effective turn recorded",
             "technical": "Bed patch: check the patch"}[name]
@@ -95,7 +170,8 @@ def push(name, event_ts):
         ok = 0
         try:
             req = urllib.request.Request("https://ntfy.sh/" + topic, data=text.encode(), method="POST")
-            urllib.request.urlopen(req, timeout=5)
+            with urllib.request.urlopen(req, timeout=5):
+                pass
             ok = 1
         except Exception as e:
             print("push failed:", e)
@@ -104,23 +180,93 @@ def push(name, event_ts):
     for r in rows:
         threading.Thread(target=send, args=(r["id"], r["topic"]), daemon=True).start()
 
+    def send_telegram(rid, chat_id):
+        ok = telegram_send(chat_id, text)
+        with db() as con:
+            con.execute("INSERT INTO telegram_notifications VALUES(?,?,?,?,?)",
+                        (event_ts, rid, name, ok, time.time()))
+    for r in telegram_rows:
+        threading.Thread(target=send_telegram, args=(r["id"], r["chat_id"]), daemon=True).start()
+
 
 # -------------------------------------------------------------------- inputs
+# USB acquisition must not wait for SQLite writes or notification dispatch.
+serial_queue = queue.Queue(maxsize=4096)
+ingestion = {"received_ts": None, "stored_ts": None, "last_source_seq": None,
+             "source_sequence_gaps": 0, "source_restarts": 0,
+             "malformed_records": 0, "storage_errors": 0, "max_store_delay_s": 0.0}
+
+
+def serial_records(ser):
+    """Retain partial lines across read timeouts instead of discarding JSON."""
+    pending = bytearray()
+    while True:
+        chunk = ser.read_until(b"\n")
+        if not chunk:
+            continue
+        pending.extend(chunk)
+        while b"\n" in pending:
+            line, _, rest = pending.partition(b"\n")
+            pending = bytearray(rest)
+            line = line.strip()
+            if not line.startswith(b"{"):
+                continue
+            try:
+                msg = json.loads(line.decode("utf-8"))
+                if not isinstance(msg, dict):
+                    raise ValueError("Expected object")
+            except (ValueError, UnicodeError):
+                ingestion["malformed_records"] += 1
+                continue
+            yield time.time(), msg
+        if len(pending) > 65536:
+            ingestion["malformed_records"] += 1
+            pending.clear()
+            print("Oversized USB record discarded; see ingestion diagnostics.", flush=True)
+
+
+def persist_serial():
+    while True:
+        received_ts, msg = serial_queue.get()
+        try:
+            while True:
+                try:
+                    store(msg, received_ts=received_ts)
+                    ingestion["stored_ts"] = received_ts
+                    ingestion["max_store_delay_s"] = max(
+                        ingestion["max_store_delay_s"], time.time() - received_ts)
+                    break
+                except sqlite3.Error:
+                    ingestion["storage_errors"] += 1
+                    print("Database write delayed; retaining USB record for retry.", flush=True)
+                    time.sleep(1)
+        finally:
+            serial_queue.task_done()
+
+
 def read_serial(port):
     import serial
+    threading.Thread(target=persist_serial, daemon=True).start()
     while True:
         try:
-            with serial.Serial(port, 115200, timeout=2) as ser:
-                print("reading from", port)
-                while True:
-                    line = ser.readline().decode("utf-8", "ignore").strip()
-                    if line.startswith("{"):
-                        try:
-                            store(json.loads(line))
-                        except ValueError:
-                            pass
+            with serial.Serial(port, 115200, timeout=1, exclusive=True) as ser:
+                print("reading from", port, flush=True)
+                for received_ts, msg in serial_records(ser):
+                    ingestion["received_ts"] = received_ts
+                    seq = msg.get("source_seq")
+                    prev = ingestion["last_source_seq"]
+                    if isinstance(seq, int):
+                        if isinstance(prev, int):
+                            if seq > prev + 1:
+                                ingestion["source_sequence_gaps"] += seq - prev - 1
+                            elif seq <= prev:
+                                ingestion["source_restarts"] += 1
+                        ingestion["last_source_seq"] = seq
+                    if serial_queue.full():
+                        print("USB storage backlog full; acquisition is waiting. No synthetic records added.", flush=True)
+                    serial_queue.put((received_ts, msg))
         except Exception as e:
-            print("serial problem:", e, "- retrying in 2 s")
+            print("serial problem:", e, "- retrying in 2 s", flush=True)
             time.sleep(2)
 
 
@@ -236,7 +382,7 @@ def since(seq: int = -1):
 def export_csv():
     """Every message as one CSV row, in the same columns as the monitor page's download."""
     cols = ["t", "roll", "pitch", "pos", "state", "acked", "sound", "remaining_s", "interval_s",
-            "anchor", "hold_s", "hold_need_s", "scale", "still", "ok", "ev"]
+            "anchor", "hold_s", "hold_need_s", "scale", "still", "ok", "ev", "source_seq", "source_uptime_s"]
     out = [",".join(cols)]
     with db() as con:
         for r in con.execute("SELECT ts, raw FROM messages ORDER BY seq"):
@@ -259,6 +405,7 @@ def status():
         ev = con.execute("SELECT ts,type,detail FROM events ORDER BY ts DESC LIMIT 15").fetchall()
     return {
         "simulated": sim["on"],
+        "ingestion": dict(ingestion, queued_records=serial_queue.qsize()),
         "age_s": None if latest["data"] is None else round(time.time() - latest["t"], 1),
         "latest": latest["data"],
         "shift": shift_summary(),
@@ -312,8 +459,31 @@ if __name__ == "__main__":
     p.add_argument("--add-recipient", nargs=2, metavar=("LABEL", "NTFY_TOPIC"),
                    help="register an opted-in course participant for phone alerts")
     p.add_argument("--list-recipients", action="store_true")
+    p.add_argument("--setup-telegram", action="store_true", help="privately enter a fresh token, find your chat, register and test")
+    p.add_argument("--telegram-token-prompt", action="store_true", help="enter a fresh Telegram token privately for this server process")
+    p.add_argument("--list-telegram", action="store_true")
     args = p.parse_args()
     init_db()
+    if args.setup_telegram or args.telegram_token_prompt:
+        print("Use a NEW token from BotFather after revoking the exposed token. Input is hidden; it is not saved.", flush=True)
+        try:
+            TELEGRAM_BOT_TOKEN = getpass.getpass("New Telegram bot token: ").strip()
+            if not TELEGRAM_BOT_TOKEN:
+                raise TelegramError("No token entered.")
+            if args.setup_telegram:
+                setup_telegram()
+                raise SystemExit(0)
+            bot = telegram_api(TELEGRAM_BOT_TOKEN, "getMe")
+            print("Telegram enabled: @" + bot.get("username", "unknown"), flush=True)
+        except TelegramError as error:
+            raise SystemExit("Telegram: " + str(error)) from None
+        except (KeyboardInterrupt, EOFError):
+            raise SystemExit("Telegram setup stopped. Run in an interactive terminal.") from None
+    if args.list_telegram:
+        with db() as con:
+            for r in con.execute("SELECT id,label,chat_id,consented_at,active FROM telegram_recipients"):
+                print(dict(r))
+        raise SystemExit(0)
     if args.add_recipient:
         label, topic = args.add_recipient
         ok = input("Has %s agreed to receive bed patch alerts on their phone? Type yes: " % label)
