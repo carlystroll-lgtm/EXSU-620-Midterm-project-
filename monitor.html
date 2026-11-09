@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patch Monitor</title>
+<style>
+:root{
+  --paper:#F2F5F6; --panel:#FFFFFF; --ink:#16242B; --quiet:#5C6B73; --line:#D5DCDF;
+  --normal:#1F7A4D; --advisory:#B36B00; --critical:#B3261E; --technical:#0E7C8C; --nodata:#5C6B73;
+  --bed:#E3E8EB; --bedline:#9AA8AF; --gown:#8DB3D6; --skin:#E9C9A8; --patch:#0E7C8C;
+  --state:var(--nodata);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#0F171B; --panel:#172227; --ink:#E6EDF0; --quiet:#93A3AB; --line:#2A3940;
+         --bed:#24333A; --bedline:#5E7079; --gown:#5E86AC; --skin:#C9A383; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:1080px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.top .status{color:var(--quiet)}
+.buttons{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;padding:8px 14px;border:1px solid var(--ink);border-radius:8px;
+  background:var(--panel);color:var(--ink);cursor:pointer}
+button.primary{background:var(--ink);color:var(--paper)}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible{outline:3px solid var(--technical);outline-offset:2px}
+
+.now{background:var(--state);color:#fff;border-radius:12px;padding:20px 24px;
+  display:flex;flex-wrap:wrap;gap:12px 30px;align-items:flex-end;justify-content:space-between;transition:background .3s}
+.now h1{margin:0;font-size:clamp(2rem,6vw,3.4rem);line-height:1}
+.now p{margin:6px 0 0;font-size:1.05rem}
+.due{text-align:right}
+.due strong{display:block;font-size:clamp(1.7rem,5vw,2.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;margin-top:6px;padding:2px 8px;border:1px solid rgba(255,255,255,.6);border-radius:999px;font-size:.85rem}
+.bar{position:relative;height:12px;background:var(--line);border-radius:6px;margin:12px 0 4px;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--state);transition:width .4s}
+.bar b{position:absolute;top:0;bottom:0;left:87.5%;width:2px;background:var(--ink)}
+.scale{position:relative;height:1.4em;color:var(--quiet);font-size:.9rem}
+.scale span{position:absolute;top:0}
+
+.cols{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:14px;align-items:start}
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.cols section{margin:0}
+main > section{margin-top:14px}
+h2{margin:0 0 10px;font-size:1rem}
+.sub{color:var(--quiet);font-size:.92rem;margin:0}
+
+#bed{display:block;width:100%;height:auto}
+#body,#ghost,#stander{transition:transform .8s ease, opacity .5s}
+.turninfo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px}
+.turninfo strong{display:block;font-size:1.3rem;font-variant-numeric:tabular-nums}
+.turninfo span{color:var(--quiet);font-size:.9rem}
+.hold{margin-top:12px}
+.hold .bar{margin:6px 0 0}
+.hold .bar i{background:var(--normal)}
+
+#ring{display:block;width:180px;height:180px;margin:4px auto 10px}
+#ringtext{margin:0;text-align:center}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px}
+.grid strong{display:block;font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.grid span{color:var(--quiet);font-size:.92rem}
+canvas{display:block;width:100%;height:200px}
+table{width:100%;border-collapse:collapse}
+td{padding:6px 0;border-top:1px solid var(--line);vertical-align:middle}
+td:first-child{width:7em;color:var(--quiet);font-variant-numeric:tabular-nums}
+td:last-child{text-align:right;color:var(--quiet)}
+.legend td:first-child{width:54px}
+.legend td{font-size:.92rem}
+.legend svg{width:44px;height:44px;display:block}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.l-pulse{animation:pulse 2s ease-in-out infinite}
+.l-blink{animation:blink .5s steps(1) infinite}
+.l-spin{animation:spin 1s linear infinite;transform-origin:22px 22px}
+@media (prefers-reduced-motion: reduce){ .l-pulse,.l-blink,.l-spin{animation:none} #body,#ghost,#stander{transition:none} }
+@media (max-width:760px){ .cols{grid-template-columns:1fr} .due{text-align:left} .advlabel{display:none} }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <span class="status" id="status">Not connected</span>
+    <div class="buttons">
+      <button class="primary" id="connect">Connect to patch</button>
+      <button id="sound">Turn on alert sound</button>
+      <button id="csv" disabled>Download log (CSV)</button>
+    </div>
+  </div>
+
+  <div class="now">
+    <div>
+      <h1 id="pos">No data</h1>
+      <p id="state">Click "Connect to patch" and choose the Pico</p>
+    </div>
+    <div class="due">
+      <strong id="count">--:--</strong>
+      <span id="countlabel">until the next turn is due</span><br>
+      <span class="chip" id="speed" hidden></span>
+    </div>
+  </div>
+  <div class="bar"><i id="fill"></i><b></b></div>
+  <div class="scale">
+    <span style="left:0">Last effective turn</span>
+    <span class="advlabel" style="left:87.5%;transform:translateX(-50%)">Advisory</span>
+    <span style="right:0">Turn due</span>
+  </div>
+
+  <div class="cols">
+    <section>
+      <h2>Patient</h2>
+      <p class="sub">Viewed from the foot of the bed. The dashed outline is where the patient was at the last effective turn.</p>
+      <svg id="bed" viewBox="0 80 640 250" role="img" aria-label="Patient position in bed">
+        <!-- headboard, seen behind the patient -->
+        <rect x="150" y="96" width="340" height="140" rx="10" fill="var(--bed)" stroke="var(--bedline)" stroke-width="2"/>
+        <!-- pillow -->
+        <rect x="245" y="186" width="150" height="40" rx="18" fill="var(--panel)" stroke="var(--bedline)" stroke-width="1.5"/>
+        <!-- ghost of the last resting position -->
+        <g id="ghost" style="transform:translate(320px,188px) rotate(0deg)">
+          <ellipse cx="0" cy="0" rx="95" ry="42" fill="none" stroke="var(--quiet)" stroke-width="2" stroke-dasharray="6 6"/>
+        </g>
+        <!-- patient lying -->
+        <g id="body" style="transform:translate(320px,188px) rotate(0deg)">
+          <!-- head on the pillow, behind the chest; the face points the same way as the chest -->
+          <circle cx="0" cy="-44" r="32" fill="var(--skin)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="-11" cy="-56" r="3.2" fill="var(--ink)"/>
+          <circle cx="11" cy="-56" r="3.2" fill="var(--ink)"/>
+          <path d="M-6 -68 Q0 -80 6 -68" fill="var(--skin)" stroke="var(--ink)" stroke-width="1.5"/>
+          <!-- chest and back -->
+          <ellipse cx="0" cy="0" rx="95" ry="42" fill="var(--gown)" stroke="var(--ink)" stroke-width="2"/>
+          <!-- the patch on the sternum -->
+          <rect x="-11" y="-36" width="22" height="12" rx="3" fill="var(--patch)" stroke="var(--ink)" stroke-width="1.5"/>
+        </g>
+        <!-- mattress and frame -->
+        <rect x="130" y="230" width="380" height="34" rx="10" fill="var(--bed)" stroke="var(--bedline)" stroke-width="2"/>
+        <ellipse id="pressure" cx="320" cy="232" rx="60" ry="7" fill="var(--critical)" opacity=".35"/>
+        <rect x="120" y="264" width="400" height="14" rx="4" fill="var(--bedline)"/>
+        <rect x="136" y="278" width="10" height="26" fill="var(--bedline)"/>
+        <rect x="494" y="278" width="10" height="26" fill="var(--bedline)"/>
+        <rect x="122" y="196" width="8" height="70" rx="3" fill="var(--bedline)"/>
+        <rect x="510" y="196" width="8" height="70" rx="3" fill="var(--bedline)"/>
+        <!-- patient standing beside the bed -->
+        <g id="stander" style="opacity:0;transform:translate(0px,0px)">
+          <circle cx="580" cy="118" r="20" fill="var(--skin)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="556" y="142" width="48" height="104" rx="20" fill="var(--gown)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="562" y="244" width="14" height="58" rx="6" fill="var(--gown)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="584" y="244" width="14" height="58" rx="6" fill="var(--gown)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="569" y="158" width="22" height="12" rx="3" fill="var(--patch)" stroke="var(--ink)" stroke-width="1.5"/>
+        </g>
+        <text x="130" y="322" font-size="14" fill="var(--quiet)" font-family="system-ui">Patient's right</text>
+        <text x="510" y="322" font-size="14" fill="var(--quiet)" font-family="system-ui" text-anchor="end">Patient's left</text>
+      </svg>
+      <div class="turninfo">
+        <div><strong id="pressureon">-</strong><span>pressure on</span></div>
+        <div><strong id="change">-</strong><span>change since the last turn (30° needed)</span></div>
+        <div><strong id="sideTime">-</strong><span>on this side for</span></div>
+      </div>
+      <div class="hold" id="holdbox" hidden>
+        <span id="holdtext"></span>
+        <div class="bar"><i id="holdfill"></i></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Bedside light</h2>
+      <svg id="ring" viewBox="-90 -90 180 180" aria-hidden="true"></svg>
+      <p id="ringtext">Waiting for the patch</p>
+      <h2 style="margin-top:18px">What the light means</h2>
+      <table class="legend"><tbody id="legend"></tbody></table>
+    </section>
+  </div>
+
+  <section>
+    <h2>Roll angle, last 5 minutes</h2>
+    <canvas id="trace"></canvas>
+  </section>
+
+  <section>
+    <h2>This session</h2>
+    <div class="grid">
+      <div><strong id="s-turns">0</strong><span>effective turns</span></div>
+      <div><strong id="s-part">0</strong><span>partial turns rejected</span></div>
+      <div><strong id="s-crit">0</strong><span>intervals expired</span></div>
+      <div><strong id="s-oob">0</strong><span>minutes upright</span></div>
+      <div><strong id="still">-</strong><span>movement (patch off below 0.03)</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Events</h2>
+    <table><tbody id="events"><tr><td></td><td>Nothing recorded yet</td><td></td></tr></tbody></table>
+  </section>
+
+
+  <section>
+    <p class="sub">Open this page in Chrome or Edge, since Safari cannot talk to USB devices. Close the VS Code Serial Monitor first, because only one program can use the Pico's connection at a time.</p>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const POS = {supine:"Supine", left:"Left lateral", right:"Right lateral", upright:"Upright"};
+const STATE = {
+  normal:"Within the turn interval",
+  advisory:"Turn due within 15 minutes",
+  critical:"Turn overdue. No effective turn recorded",
+  technical:"Check the patch: detached, motionless or sensor fault"
+};
+const EVENT = {
+  turn:"Effective turn", partial:"Partial turn rejected", advisory:"Advisory raised",
+  critical:"Turn interval expired", ack:"Acknowledged at the bedside",
+  critical_clear:"Critical alarm cleared", technical:"Technical alarm",
+  technical_clear:"Technical alarm cleared", position:"Position changed", press:"Bedside button pressed"
+};
+const RGB = {green:[31,200,90], amber:[255,150,0], red:[230,30,30], cyan:[0,170,255], white:[255,255,255]};
+
+const log = [], trace = [], events = [];
+const counts = {turn:0, partial:0, critical:0, upright:0};
+let D = null, lastSeen = 0, flashUntil = 0, confirmUntil = 0, sideSince = Date.now(), lastSide = null;
+
+function clock(s){
+  s = Math.max(0, Math.round(s));
+  const h = Math.floor(s/3600), m = Math.floor(s%3600/60), sec = s%60;
+  return (h ? h + ":" + String(m).padStart(2,"0") : m) + ":" + String(sec).padStart(2,"0");
+}
+function words(s){
+  s = Math.max(0, Math.round(s));
+  const h = Math.floor(s/3600), m = Math.round(s%3600/60);
+  if(m === 60) return (h+1) + " h";
+  return h ? h + " h" + (m ? " " + m + " min" : "") : m + " min";
+}
+
+/* ================= sound: mirrors the bedside speaker and stops at once ================= */
+let audio = null, soundOn = false, oscs = [], playing = null, repeatTimer = null;
+const SOUND = {advisory:{n:3,f:880,gap:.4,every:30000}, critical:{n:10,f:1200,gap:.25,every:5000},
+               technical:{n:2,f:750,gap:.12,every:20000}};
+$("sound").onclick = () => {
+  soundOn = !soundOn;
+  if(soundOn){ audio = audio || new (window.AudioContext||window.webkitAudioContext)(); audio.resume(); playing = null; }
+  else stopSound();
+  $("sound").textContent = soundOn ? "Turn off alert sound" : "Turn on alert sound";
+  if(D) followSound(D);
+};
+function stopSound(){
+  clearInterval(repeatTimer); repeatTimer = null;
+  for(const o of oscs){ try{ o.stop(); }catch(e){} }
+  oscs = []; playing = null;
+}
+function burst(p){
+  if(!audio) return;
+  for(let i=0;i<p.n;i++){
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.frequency.value = p.f; g.gain.value = .15; o.connect(g); g.connect(audio.destination);
+    const t = audio.currentTime + i*p.gap; o.start(t); o.stop(t + p.gap*.6);
+    oscs.push(o); o.onended = () => { oscs = oscs.filter(x => x !== o); };
+  }
+}
+function followSound(d){
+  const want = (soundOn && d.sound && SOUND[d.state]) ? d.state : null;
+  if(want === playing) return;
+  stopSound();
+  if(!want) return;
+  playing = want;
+  burst(SOUND[want]);
+  repeatTimer = setInterval(() => burst(SOUND[want]), SOUND[want].every);
+}
+
+/* ================= bedside light mirror ================= */
+const ringSvg = $("ring"), dots = [];
+for(let i=0;i<16;i++){
+  const a = (i/16)*2*Math.PI - Math.PI/2;
+  const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("cx", 62*Math.cos(a)); c.setAttribute("cy", 62*Math.sin(a)); c.setAttribute("r", 11);
+  c.setAttribute("stroke","var(--line)"); c.setAttribute("stroke-width","1.5");
+  ringSvg.appendChild(c); dots.push(c);
+}
+function lamp(rgb, k){ return k <= 0.02 ? "var(--paper)" : "rgba(" + rgb.join(",") + "," + Math.min(1,k).toFixed(2) + ")"; }
+function ringFrame(){
+  const now = performance.now()/1000, wall = Date.now();
+  let cols = new Array(16).fill(lamp(RGB.green,0)), text = "Waiting for the patch";
+  if(D){
+    const frac = Math.max(0, Math.min(1, D.remaining_s / D.interval_s));
+    if(wall < flashUntil){ cols.fill(lamp(RGB.white,1)); }
+    else if(wall < confirmUntil){ const on = Math.floor((confirmUntil-wall)/250)%2===1; cols.fill(lamp(RGB.green, on?1:0)); }
+    else if(D.state === "normal"){
+      const lit = Math.max(1, Math.ceil(16*frac));
+      cols = cols.map((_,i) => lamp(RGB.green, i < lit ? 1 : 0));
+    }else if(D.state === "advisory"){
+      cols.fill(lamp(RGB.amber, .2 + .8*(.5+.5*Math.sin(now*Math.PI))));
+    }else if(D.state === "critical"){
+      cols.fill(lamp(RGB.red, D.acked ? 1 : (Math.floor(now*4)%2===0 ? 1 : 0)));
+    }else{
+      const head = Math.floor(now*16)%16;
+      cols = cols.map((_,i) => { const d=(head-i+16)%16; return lamp(RGB.cyan, d===0?1:d===1?.4:d===2?.15:0); });
+    }
+    const left = D.remaining_s * (D.scale||1);
+    text = D.state === "normal" ? "Green, emptying like a clock. " + Math.max(1,Math.ceil(16*frac)) + " of 16 lights left, about " + words(left) + " until the turn is due."
+         : D.state === "advisory" ? "Amber, slowly pulsing. The turn is due in " + words(left) + "."
+         : D.state === "critical" ? (D.acked ? "Red, steady. Acknowledged, still waiting for an effective turn." : "Red, flashing. Overdue. Press the bedside button to silence.")
+         : "Cyan, one light circling. Check that the patch is on the patient.";
+    if(D.state !== "normal" && D.state !== "critical" && !D.sound) text += " Sound silenced.";
+  }
+  dots.forEach((c,i) => c.setAttribute("fill", cols[i]));
+  $("ringtext").textContent = text;
+  requestAnimationFrame(ringFrame);
+}
+
+/* legend with small animated rings */
+function mini(rgb, mode){
+  let s = '<svg viewBox="0 0 44 44"><g class="' + (mode==="pulse"?"l-pulse":mode==="blink"?"l-blink":mode==="spin"?"l-spin":"") + '">';
+  for(let i=0;i<16;i++){
+    const a=(i/16)*2*Math.PI-Math.PI/2, x=22+16*Math.cos(a), y=22+16*Math.sin(a);
+    let k = 1;
+    if(mode==="clock") k = i<11?1:0;
+    if(mode==="spin") k = i===0?1:i===15?.4:i===14?.15:0;
+    s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.4" fill="'+lamp(rgb,k)+'" stroke="'+(rgb===RGB.white?"var(--quiet)":"var(--line)")+'" stroke-width=".6"/>';
+  }
+  return s + '</g></svg>';
+}
+$("legend").innerHTML = [
+  [mini(RGB.green,"clock"), "Green, emptying like a clock", "Time left until the next turn. A full ring is 2 hours, so each light is about 7.5 minutes. Silent."],
+  [mini(RGB.amber,"pulse"), "Amber, slowly pulsing, 3 beeps", "The turn is due within 15 minutes."],
+  [mini(RGB.red,"blink"), "Red, flashing, 10 beeps", "Two hours with no effective turn. The button silences it."],
+  [mini(RGB.red,""), "Red, steady", "Acknowledged. Turns green once an effective turn is recorded."],
+  [mini(RGB.cyan,"spin"), "Cyan, one light circling, chirp", "Check the patch: it has come off, is lying perfectly still, or the sensor has a fault."],
+  [mini(RGB.white,""), "One white flash", "The button press was registered."],
+  [mini(RGB.green,"blink"), "Two green flashes", "An effective turn was recorded and the clock restarted."]
+].map(r => "<tr><td>"+r[0]+"</td><td><strong>"+r[1]+"</strong><br><span class='sub'>"+r[2]+"</span></td><td></td></tr>").join("");
+
+/* ================= patient picture ================= */
+const A = 95, B = 42, MATTRESS = 230;
+function placeLying(el, roll){
+  const th = -roll*Math.PI/180;                      // positive roll = onto the right side = toward the viewer's left
+  const h = Math.sqrt(A*A*Math.sin(th)**2 + B*B*Math.cos(th)**2);
+  el.style.transform = "translate(320px," + (MATTRESS - h).toFixed(1) + "px) rotate(" + (-roll).toFixed(1) + "deg)";
+}
+function drawPatient(d){
+  const upright = d.pos === "upright";
+  placeLying($("body"), d.roll);
+  placeLying($("ghost"), d.anchor || 0);
+  $("body").style.opacity = upright ? 0 : 1;
+  $("ghost").style.opacity = upright ? 0 : .8;
+  $("stander").style.opacity = upright ? 1 : 0;
+  $("pressure").setAttribute("opacity", upright ? 0 : .35);
+
+  const side = upright ? "Out of bed or sitting up" : Math.abs(d.roll) < 30 ? "Back and sacrum" : d.roll > 0 ? "Right hip and shoulder" : "Left hip and shoulder";
+  if(side !== lastSide){ lastSide = side; sideSince = Date.now(); }
+  $("pressureon").textContent = side;
+  $("sideTime").textContent = words((Date.now() - sideSince)/1000 * (d.scale||1));
+
+  let ch = Math.abs(d.roll - (d.anchor||0)); if(ch > 180) ch = 360 - ch;
+  $("change").textContent = upright ? "-" : ch.toFixed(0) + "°";
+  $("change").style.color = upright ? "" : ch >= 30 ? "var(--normal)" : "";
+
+  const need = d.hold_need_s || 1, held = d.hold_s || 0;
+  if(held > 0 && !upright){
+    $("holdbox").hidden = false;
+    $("holdtext").textContent = "Turn being held: " + words(held*(d.scale||1)) + " of " + words(need*(d.scale||1)) + ". It counts once the bar is full.";
+    $("holdfill").style.width = Math.min(100, held/need*100) + "%";
+  }else $("holdbox").hidden = true;
+}
+
+/* ================= one message from the Pico ================= */
+function handle(d){
+  const now = Date.now();
+  const prev = D, prevSeen = lastSeen;
+  D = d; lastSeen = now;
+  log.push({t:new Date(now).toISOString(), ...d, ev:JSON.stringify(d.ev||[])});
+  $("csv").disabled = false;
+
+  trace.push([now, d.roll]);
+  while(trace.length && now - trace[0][0] > 300000) trace.shift();
+
+  if(prev && d.pos === "upright") counts.upright += Math.min(2, (now - prevSeen)/1000);   // seconds upright
+
+  for(const [name, detail] of (d.ev || [])){
+    if(name in counts) counts[name]++;
+    if(name === "turn") confirmUntil = now + 1000;
+    if(name === "ack") flashUntil = now + 150;
+    events.unshift({t:now, name, detail});
+  }
+  if(prev && prev.sound && !d.sound) flashUntil = now + 150;
+  events.length = Math.min(events.length, 30);
+
+  followSound(d);
+
+  document.documentElement.style.setProperty("--state", "var(--" + d.state + ")");
+  $("pos").textContent = POS[d.pos] || d.pos;
+  $("state").textContent = (d.state==="critical" && d.acked) ? "Acknowledged. Sound is off. Waiting for an effective turn"
+    : STATE[d.state] + (d.state!=="normal" && !d.sound ? ". Sound silenced" : "");
+  const left = d.remaining_s * (d.scale||1);
+  $("count").textContent = clock(Math.abs(left));
+  $("countlabel").textContent = left < 0 ? "overdue. Resets when the patient is turned" : "until the next turn is due";
+  $("fill").style.width = Math.min(100, Math.max(0, (1 - d.remaining_s/d.interval_s)*100)) + "%";
+  $("speed").hidden = !(d.scale > 1);
+  $("speed").textContent = "Demo speed: " + d.scale + " times faster";
+
+  drawPatient(d);
+
+  $("s-turns").textContent = counts.turn;
+  $("s-part").textContent = counts.partial;
+  $("s-crit").textContent = counts.critical;
+  $("s-oob").textContent = (counts.upright*(d.scale||1)/60).toFixed(0);
+  $("still").textContent = d.still === null || d.still === undefined ? "warming up" : d.still.toFixed(3);
+
+  if(events.length){
+    $("events").innerHTML = events.map(e =>
+      "<tr><td>" + new Date(e.t).toLocaleTimeString() + "</td><td>" + (EVENT[e.name]||e.name) +
+      "</td><td>" + (POS[e.detail]||e.detail||"") + "</td></tr>").join("");
+  }
+  draw();
+}
+
+/* ================= roll trace ================= */
+function draw(){
+  const c = $("trace"), r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  c.width = r.width*dpr; c.height = r.height*dpr;
+  const g = c.getContext("2d"); g.scale(dpr,dpr);
+  const css = getComputedStyle(document.documentElement);
+  const ink = css.getPropertyValue("--ink"), quiet = css.getPropertyValue("--quiet"), line = css.getPropertyValue("--line");
+  const L = 72, R = 8, T = 8, B2 = 8, W = r.width-L-R, H = r.height-T-B2;
+  const y = v => T + H*(1 - (Math.max(-120,Math.min(120,v)) + 120)/240);
+  g.font = "12px system-ui"; g.textBaseline = "middle"; g.textAlign = "right";
+  for(const v of [-90,-30,0,30,90]){
+    g.strokeStyle = line; g.lineWidth = 1; g.setLineDash(Math.abs(v)===30?[4,4]:[]);
+    g.beginPath(); g.moveTo(L, y(v)); g.lineTo(L+W, y(v)); g.stroke();
+    g.fillStyle = quiet; g.fillText(v===90?"Right 90°":v===-90?"Left 90°":v+"°", L-6, y(v));
+  }
+  g.setLineDash([]);
+  if(trace.length < 2) return;
+  const now = Date.now(), x = t => L + W*(1 - (now - t)/300000);
+  g.strokeStyle = ink; g.lineWidth = 1.8; g.beginPath();
+  trace.forEach(([t,v],i) => i ? g.lineTo(x(t), y(v)) : g.moveTo(x(t), y(v)));
+  g.stroke();
+}
+window.addEventListener("resize", draw);
+
+/* ================= serial connection ================= */
+let port = null, serviceOn = false;
+$("connect").onclick = async () => {
+  if(!("serial" in navigator)){
+    $("status").textContent = "This browser cannot talk to USB devices. Open the page in Chrome or Edge.";
+    return;
+  }
+  try{
+    port = await navigator.serial.requestPort();
+    await port.open({baudRate:115200});
+  }catch(e){
+    $("status").textContent = e.name === "NotFoundError" ? "No device chosen"
+      : "Could not open the Pico. Close the VS Code Serial Monitor and try again.";
+    return;
+  }
+  $("connect").disabled = true;
+  $("status").textContent = "Connected. Waiting for data";
+  readLoop();
+};
+async function readLoop(){
+  const decoder = new TextDecoderStream();
+  port.readable.pipeTo(decoder.writable).catch(()=>{});
+  const reader = decoder.readable.getReader();
+  let buffer = "";
+  try{
+    while(true){
+      const {value, done} = await reader.read();
+      if(done) break;
+      buffer += value;
+      let i;
+      while((i = buffer.indexOf("\n")) >= 0){
+        const line = buffer.slice(0,i).trim();
+        buffer = buffer.slice(i+1);
+        if(line.startsWith("{")){ try{ handle(JSON.parse(line)); }catch(e){} }
+      }
+    }
+  }catch(e){}
+  stopSound();
+  $("status").textContent = "Disconnected. Plug the Pico back in and click Connect";
+  $("connect").disabled = false;
+}
+setInterval(() => {
+  if(!lastSeen) return;
+  const age = (Date.now() - lastSeen)/1000;
+  if(age > 5){
+    $("status").textContent = "No data for " + Math.round(age) + " s. Check the USB cable";
+    document.documentElement.style.setProperty("--state","var(--nodata)");
+    stopSound();
+  }else if(serviceOn){ $("status").textContent = "Connected through the laptop service"; }
+  else if($("connect").disabled){ $("status").textContent = "Connected"; }
+}, 1000);
+
+/* ================= CSV for scoring against the video ================= */
+$("csv").onclick = () => {
+  const cols = ["t","roll","pitch","pos","state","acked","sound","remaining_s","interval_s","anchor","hold_s","hold_need_s","scale","still","ok","ev"];
+  const esc = v => { v = v===null||v===undefined ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
+  const text = cols.join(",") + "\n" + log.map(r => cols.map(c => esc(r[c])).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type:"text/csv"}));
+  a.download = "patch-log-" + new Date().toISOString().slice(0,19).replace(/:/g,"-") + ".csv";
+  a.click();
+};
+
+/* ================= demo without hardware: add ?demo to the address ================= */
+if(location.search.includes("demo")){
+  $("status").textContent = "Demo data";
+  let t = 0, roll = 2, anchor = 2, hold = 0, rem = 120, state = "normal", acked = false, critAt = -1, phase = 0, pitch = 1;
+  setInterval(() => {
+    t++; const ev = [];
+    if(t < 12) roll = 2;
+    else if(t < 18){ roll = 13; if(t===17) ev.push(["partial","0 s"]); }
+    else if(t < 24) roll = 2;
+    else if(phase === 0){ roll = 41; hold++; if(hold >= 15){ ev.push(["turn","lateral"]); anchor = 41; hold = 0; rem = 120; phase = 1; } }
+    else if(phase === 1){
+      rem -= 5;
+      if(rem <= 15 && state === "normal"){ state = "advisory"; ev.push(["advisory",""]); }
+      if(rem <= 0 && state !== "critical"){ state = "critical"; ev.push(["critical",""]); critAt = t; }
+      if(state === "critical" && t === critAt + 8){ acked = true; ev.push(["ack",""]); }
+      if(acked && t > critAt + 12){ roll = -38; hold++; if(hold >= 15){ ev.push(["turn","lateral"],["critical_clear",""]); state="normal"; acked=false; anchor=-38; hold=0; rem=120; phase=2; } }
+    }else if(phase === 2){ rem -= 1; if(t % 60 > 40){ pitch = 80; } else pitch = 1; }
+    const pos = pitch > 60 ? "upright" : Math.abs(roll) >= 30 ? (roll > 0 ? "right" : "left") : "supine";
+    handle({roll, pitch, pos, state, acked, sound: state!=="normal" && !acked, remaining_s: rem, interval_s:120,
+            anchor, hold_s: hold, hold_need_s:15, scale:60, still:.21, ok:true, ev});
+  }, 300);
+}
+/* ================= when the laptop service serves this page, read from it ================= */
+async function serviceMode(){
+  if(!location.protocol.startsWith("http") || location.search.includes("demo")) return;
+  let seq;
+  try{ const r = await fetch("/api/since?seq=-1"); if(!r.ok) return; seq = (await r.json()).last; }catch(e){ return; }
+  serviceOn = true;
+  $("connect").hidden = true;
+  $("status").textContent = "Connected through the laptop service";
+  $("csv").disabled = false;
+  $("csv").onclick = () => { location.href = "/api/export.csv"; };
+  const poll = async () => {
+    try{
+      const j = await (await fetch("/api/since?seq=" + seq)).json();
+      for(const m of j.messages) handle(m);
+      seq = j.last;
+    }catch(e){}
+    setTimeout(poll, 250);
+  };
+  poll();
+}
+serviceMode();
+draw();
+requestAnimationFrame(ringFrame);
+</script>
+</body>
+</html>
