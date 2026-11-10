@@ -25,7 +25,7 @@ upright for each shift. Bench only: nothing here goes near a patient or clinical
 
 | Part | Connection |
 |---|---|
-| LSM6DS3TR-C sensor | Grove to STEMMA QT cable into Grove port I2C0 (SDA GP8, SCL GP9), extended to about 1 m |
+| LSM6DS3TR-C sensor | Grove to STEMMA QT cable into Grove port I2C0 (SDA GP8, SCL GP9) |
 | NeoPixel Ring 16 | Power to VBUS (5 V), GND to GND, Data Input to GP16 |
 | PAM8302 amplifier | Vin to 3V3 OUT through the breadboard red rail, GND to GND, A+ to GP18, A- to GND, SD open |
 | 3 W 8 ohm speaker | Amplifier output + and - only |
